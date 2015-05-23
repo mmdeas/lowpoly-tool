@@ -1,7 +1,13 @@
-var lowpoly = lowpoly || {};
-lowpoly.anchorFor = {};
-lowpoly.currentLayer;
-lowpoly.layers = {};
+if (typeof(lowpoly) === 'undefined')
+{
+	var lowpoly = {
+	anchorFor: {},
+	fromAnchors: {},
+	currentLayer: undefined,
+	layers: {},
+	lastAnchors: []
+	}
+}
 
 lowpoly.init = function()
 {
@@ -48,7 +54,6 @@ lowpoly.init = function()
 
 lowpoly.stageClick = function(event)
 {
-	lowpoly.lastAnchors = lowpoly.lastAnchors || [];
 	if (!event.evt.shiftKey && !event.evt.altKey)
 		lowpoly.lastAnchors = [];
 	if (event.evt.shiftKey && lowpoly.lastAnchors.length == 2)
