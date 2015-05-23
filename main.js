@@ -14,6 +14,22 @@ lowpoly.init = function()
 		height: height
 	});
 
+	var bg_image_obj = new Image();
+	bg_image_obj.src = 'test.jpg';
+	bg_image_obj.onload = function()
+	{
+		var image_layer = new Konva.Layer();
+		var image = new Konva.Image({
+			image: bg_image_obj,
+			x: 0,
+			y: 0
+		});
+		image_layer.add(image);
+		lowpoly.stage.add(image_layer);
+		image_layer.moveToBottom();
+		image.on('click', lowpoly.stageClick);
+	}
+
 	var anchor_layer = new Konva.Layer();
 	var line_layer = new Konva.Layer();
 	var poly_layer = new Konva.Layer();
@@ -28,8 +44,6 @@ lowpoly.init = function()
 	lowpoly.stage.add(anchor_layer);
 	lowpoly.stage.add(line_layer);
 	lowpoly.stage.add(poly_layer);
-
-	lowpoly.stage.on('contentClick', lowpoly.stageClick);
 }
 
 lowpoly.stageClick = function(event)
