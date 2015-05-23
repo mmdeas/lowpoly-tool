@@ -36,6 +36,10 @@ lowpoly.stageClick = function(event)
 {
 	console.log(event);
 	lowpoly.lastAnchors = lowpoly.lastAnchors || [];
+	if (event.evt.shiftKey)
+		lowpoly.lastAnchors = [];
+	if (event.evt.altKey && lowpoly.lastAnchors.length == 2)
+		lowpoly.lastAnchors.shift()
 	var x = event.evt.x;
 	var y = event.evt.y;
 	// draw new anchor
