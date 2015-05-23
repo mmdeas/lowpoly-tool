@@ -63,6 +63,7 @@ lowpoly.stageClick = function(event)
 		fill: 'white',
 		stroke: 'black'
 	});
+	anchor.on("click", lowpoly.anchorClick);
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.anchors.add(anchor);
 	lowpoly.stage.add(layer.anchors);
@@ -95,4 +96,10 @@ lowpoly.stageClick = function(event)
 	}
 	lowpoly.lastAnchors.push(anchor);
 	lowpoly.stage.add(layer.lines);
+}
+
+lowpoly.anchorClick = function(event)
+{
+	console.log("anchorClick");
+	console.log(event);
 }
