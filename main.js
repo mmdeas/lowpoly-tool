@@ -79,28 +79,29 @@ lowpoly.stageClick = function(event)
 	if (lowpoly.lastAnchors.length > 0)
 	{
 		var prev = lowpoly.lastAnchors[0];
-		var line = new Konva.Line({
-			points: [anchor.x(), anchor.y(), prev.x(), prev.y()],
-			stroke: 'black'
-		});
-		layer.lines.add(line);
-		lowpoly.anchorFor[anchor].push(line);
-		lowpoly.anchorFor[prev].push(line);
+		lowpoly.connectAnchors(prev, anchor);
 	}
 	if (lowpoly.lastAnchors.length == 2)
 	{
 		var prev = lowpoly.lastAnchors[1];
-		var line = new Konva.Line({
-			points: [anchor.x(), anchor.y(), prev.x(), prev.y()],
-			stroke: 'black'
-		});
-		layer.lines.add(line);
+		lowpoly.connectAnchors(prev, anchor);
 		lowpoly.lastAnchors.shift();
-		lowpoly.anchorFor[anchor].push(line);
-		lowpoly.anchorFor[prev].push(line);
 	}
 	lowpoly.lastAnchors.push(anchor);
 	lowpoly.stage.add(layer.lines);
+}
+
+lowpoly.connectAnchors = function(a1, a2)
+{
+	var line = new Konva.Line({
+		points: [a1.x(), a1.y(), a2.x(), a2.y()],
+		stroke: 'black'
+	});
+	var layer = lowpoly.layers[lowpoly.currentLayer];
+	layer.lines.add(line);
+	lowpoly.anchorFor[a1].push(line);
+	lowpoly.anchorFor[a2].push(line);
+	lowpoly.fromAnchors[line] = [a1, a2];
 }
 
 lowpoly.anchorClick = function(event)
