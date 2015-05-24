@@ -106,6 +106,17 @@ lowpoly.connectAnchors = function(a1, a2)
 
 lowpoly.anchorClick = function(event)
 {
-	console.log("anchorClick");
-	console.log(event);
+	if (lowpoly.lastAnchors.length == 0)
+	{
+		lowpoly.lastAnchors.push(event.target);
+		return;
+	}
+	if (lowpoly.lastAnchors.length == 2)
+		lowpoly.lastAnchors.shift();
+	if (event.evt.shiftKey)
+	{
+		lowpoly.connectAnchors(lowpoly.lastAnchors[0], event.target);
+	}
+	lowpoly.lastAnchors.push(event.target);
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
 }
