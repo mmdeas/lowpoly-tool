@@ -73,7 +73,7 @@ lowpoly.stageClick = function(event)
 	layer.anchors.add(anchor);
 	lowpoly.stage.add(layer.anchors);
 
-	lowpoly.anchorFor[anchor] = [];
+	lowpoly.anchorFor[anchor._id] = [];
 
 	// draw lines
 	if (lowpoly.lastAnchors.length > 0)
@@ -99,9 +99,9 @@ lowpoly.connectAnchors = function(a1, a2)
 	});
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.lines.add(line);
-	lowpoly.anchorFor[a1].push(line);
-	lowpoly.anchorFor[a2].push(line);
-	lowpoly.fromAnchors[line] = [a1, a2];
+	lowpoly.anchorFor[a1._id].push(line);
+	lowpoly.anchorFor[a2._id].push(line);
+	lowpoly.fromAnchors[line._id] = [a1, a2];
 }
 
 lowpoly.anchorClick = function(event)
