@@ -77,6 +77,7 @@ lowpoly.stageClick = function(event)
 	lowpoly.stage.add(layer.anchors);
 
 	lowpoly.linesWithAnchor[anchor._id] = [];
+	lowpoly.trianglesForAnchor[anchor._id] = [];
 
 	// draw lines
 	if (lowpoly.lastAnchors.length > 0)
@@ -143,7 +144,20 @@ lowpoly.connectAnchors = function(a1, a2)
 	for (n in n1)
 	{
 		if (n in n2)
-			lowpoly.triangles.push([a1, a2, n1[n]]);
+		{
+			fill_colour = lowpoly.getColourForTriangle(a1, a2, n1[n]);
+			tri = new Konva.Line({
+				points: [a1.x(), a1.y(), a2.x(), a2.y(), n1[n].x(), n1[n].y()],
+				strokeWidth: 0,
+				closed: true,
+				fill: fill_colour
+			})
+			lowpoly.trianglesForAnchor[a1._id].push(tri);
+			lowpoly.trianglesForAnchor[a2._id].push(tri);
+			lowpoly.trianglesForAnchor[n1[n]._id].push(tri);
+			lowpoly.layers[lowpoly.currentLayer].polys.add(tri);
+			lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].polys);
+		}
 	}
 }
 
@@ -180,4 +194,13 @@ lowpoly.anchorDrag = function(event)
 		lowpoly.redrawLine(lines[line]);
 	}
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines)
+}
+
+lowpoly.getColourForTriangle = function(a1, a2, a3)
+{
+	var x = (a1.x() + a2.x() + a3.x()) / 3;
+	var y = (a1.y() + a2.y() + a3.y()) / 3;
+	var colour = lowpoly.stage.children[0].canvas._canvas.getContext('2d').getImageData(x, y, 1, 1).data;
+	var ret = 'rgb(' + colour[0] + ', ' + colour[1] + ', ' + colour[2] + ')';
+	return ret;
 }
