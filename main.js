@@ -1,12 +1,12 @@
 if (typeof(lowpoly) === 'undefined')
 {
 	var lowpoly = {
-	anchorFor: {},
-	fromAnchors: {},
+	linesWithAnchor: {},
+	anchorsForLine: {},
 	currentLayer: undefined,
 	layers: {},
 	lastAnchors: [],
-	triangles: []
+	trianglesForAnchor: []
 	};
 }
 
@@ -76,7 +76,7 @@ lowpoly.stageClick = function(event)
 	layer.anchors.add(anchor);
 	lowpoly.stage.add(layer.anchors);
 
-	lowpoly.anchorFor[anchor._id] = [];
+	lowpoly.linesWithAnchor[anchor._id] = [];
 
 	// draw lines
 	if (lowpoly.lastAnchors.length > 0)
@@ -102,27 +102,27 @@ lowpoly.connectAnchors = function(a1, a2)
 	});
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.lines.add(line);
-	lowpoly.anchorFor[a1._id].push(line);
-	lowpoly.anchorFor[a2._id].push(line);
-	lowpoly.fromAnchors[line._id] = [a1, a2];
+	lowpoly.linesWithAnchor[a1._id].push(line);
+	lowpoly.linesWithAnchor[a2._id].push(line);
+	lowpoly.anchorsForLine[line._id] = [a1, a2];
 	// detect new triangles
 	a1neighbours = {};
-	lines = lowpoly.anchorFor[a1._id];
+	lines = lowpoly.linesWithAnchor[a1._id];
 	for (line in lines)
 	{
 		lineId = lines[line]._id;
-		lineAnchors = lowpoly.fromAnchors[lineId];
+		lineAnchors = lowpoly.anchorsForLine[lineId];
 		if (a1 != lineAnchors[0] && a2 != lineAnchors[0])
 			a1neighbours[lineAnchors[0]._id] = lineAnchors[0];
 		else if (a1 != lineAnchors[1] && a2 != lineAnchors[1])
 			a1neighbours[lineAnchors[1]._id] = lineAnchors[1];
 	}
 	a2neighbours = {};
-	lines = lowpoly.anchorFor[a2._id];
+	lines = lowpoly.linesWithAnchor[a2._id];
 	for (line in lines)
 	{
 		lineId = lines[line]._id;
-		lineAnchors = lowpoly.fromAnchors[lineId];
+		lineAnchors = lowpoly.anchorsForLine[lineId];
 		if (a2 != lineAnchors[0] && a1 != lineAnchors[0])
 			a2neighbours[lineAnchors[0]._id] = lineAnchors[0];
 		else if (a2 != lineAnchors[1] && a1 != lineAnchors[1])
@@ -166,15 +166,15 @@ lowpoly.anchorClick = function(event)
 
 lowpoly.redrawLine = function(line)
 {
-	a1 = lowpoly.fromAnchors[line._id][0];
-	a2 = lowpoly.fromAnchors[line._id][1];
+	a1 = lowpoly.anchorsForLine[line._id][0];
+	a2 = lowpoly.anchorsForLine[line._id][1];
 	line.setPoints([a1.x(), a1.y(), a2.x(), a2.y()]);
 }
 
 lowpoly.anchorDrag = function(event)
 {
 	anchor = event.target;
-	lines = lowpoly.anchorFor[anchor._id];
+	lines = lowpoly.linesWithAnchor[anchor._id];
 	for (line in lines)
 	{
 		lowpoly.redrawLine(lines[line]);
