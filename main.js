@@ -93,6 +93,7 @@ lowpoly.stageClick = function(event)
 	}
 	lowpoly.lastAnchors.push(anchor);
 	lowpoly.stage.add(layer.lines);
+	lowpoly.stage.add(layer.anchors);
 }
 
 lowpoly.connectAnchors = function(a1, a2)
@@ -176,6 +177,7 @@ lowpoly.anchorClick = function(event)
 	}
 	lowpoly.lastAnchors.push(event.target);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
 }
 
 lowpoly.redrawLine = function(line)
@@ -193,7 +195,8 @@ lowpoly.anchorDrag = function(event)
 	{
 		lowpoly.redrawLine(lines[line]);
 	}
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines)
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
 }
 
 lowpoly.getColourForTriangle = function(a1, a2, a3)
