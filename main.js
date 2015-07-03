@@ -5,8 +5,9 @@ if (typeof(lowpoly) === 'undefined')
 	fromAnchors: {},
 	currentLayer: undefined,
 	layers: {},
-	lastAnchors: []
-	}
+	lastAnchors: [],
+	triangles: []
+	};
 }
 
 lowpoly.init = function()
@@ -104,6 +105,46 @@ lowpoly.connectAnchors = function(a1, a2)
 	lowpoly.anchorFor[a1._id].push(line);
 	lowpoly.anchorFor[a2._id].push(line);
 	lowpoly.fromAnchors[line._id] = [a1, a2];
+	// detect new triangles
+	a1neighbours = {};
+	lines = lowpoly.anchorFor[a1._id];
+	for (line in lines)
+	{
+		lineId = lines[line]._id;
+		lineAnchors = lowpoly.fromAnchors[lineId];
+		if (a1 != lineAnchors[0] && a2 != lineAnchors[0])
+			a1neighbours[lineAnchors[0]._id] = lineAnchors[0];
+		else if (a1 != lineAnchors[1] && a2 != lineAnchors[1])
+			a1neighbours[lineAnchors[1]._id] = lineAnchors[1];
+	}
+	a2neighbours = {};
+	lines = lowpoly.anchorFor[a2._id];
+	for (line in lines)
+	{
+		lineId = lines[line]._id;
+		lineAnchors = lowpoly.fromAnchors[lineId];
+		if (a2 != lineAnchors[0] && a1 != lineAnchors[0])
+			a2neighbours[lineAnchors[0]._id] = lineAnchors[0];
+		else if (a2 != lineAnchors[1] && a1 != lineAnchors[1])
+			a2neighbours[lineAnchors[1]._id] = lineAnchors[1];
+	}
+
+	if (a1neighbours.size < a2neighbours.size)
+	{
+		n1 = a1neighbours;
+		n2 = a2neighbours;
+	}
+	else
+	{
+		n1 = a2neighbours;
+		n2 = a1neighbours;
+	}
+
+	for (n in n1)
+	{
+		if (n in n2)
+			lowpoly.triangles.push([a1, a2, n1[n]]);
+	}
 }
 
 lowpoly.anchorClick = function(event)
