@@ -11,8 +11,8 @@ if (typeof(lowpoly) === 'undefined')
 
 lowpoly.init = function()
 {
-	var width = window.innerWidth * 0.9;
-	var height = window.innerHeight * 0.9;
+	var width = window.innerWidth;
+	var height = window.innerHeight;
 
 	lowpoly.stage = new Konva.Stage({
 		container: 'container',
