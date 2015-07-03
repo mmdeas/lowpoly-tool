@@ -66,9 +66,11 @@ lowpoly.stageClick = function(event)
 		x: x,
 		y: y,
 		fill: 'white',
-		stroke: 'black'
+		stroke: 'black',
+		draggable: 'true'
 	});
 	anchor.on("click", lowpoly.anchorClick);
+	anchor.on("dragstart dragmove dragend", lowpoly.anchorDrag);
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.anchors.add(anchor);
 	lowpoly.stage.add(layer.anchors);
@@ -119,4 +121,22 @@ lowpoly.anchorClick = function(event)
 	}
 	lowpoly.lastAnchors.push(event.target);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
+}
+
+lowpoly.redrawLine = function(line)
+{
+	a1 = lowpoly.fromAnchors[line._id][0];
+	a2 = lowpoly.fromAnchors[line._id][1];
+	line.setPoints([a1.x(), a1.y(), a2.x(), a2.y()]);
+}
+
+lowpoly.anchorDrag = function(event)
+{
+	anchor = event.target;
+	lines = lowpoly.anchorFor[anchor._id];
+	for (line in lines)
+	{
+		lowpoly.redrawLine(lines[line]);
+	}
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines)
 }
