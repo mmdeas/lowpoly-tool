@@ -9,5 +9,11 @@
 </head>
 <body onload="lowpoly.init()">
 <div id="container"></div>
+<div id="controls">
+	<input type="checkbox" id="anchors" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show anchors
+	<input type="checkbox" id="lines" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show lines
+	<input type="checkbox" id="polys" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show polys
+	<input type="checkbox" id="image" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show image
+</div>
 </body>
 </html>

@@ -13,8 +13,8 @@ if (typeof(lowpoly) === 'undefined')
 
 lowpoly.init = function()
 {
-	var width = window.innerWidth;
-	var height = window.innerHeight;
+	var width = window.innerWidth-2;
+	var height = window.innerHeight/2;
 
 	lowpoly.stage = new Konva.Stage({
 		container: 'container',
@@ -26,15 +26,15 @@ lowpoly.init = function()
 	bg_image_obj.src = 'test.jpg';
 	bg_image_obj.onload = function()
 	{
-		var image_layer = new Konva.Layer();
+		lowpoly.image_layer = new Konva.Layer();
 		var image = new Konva.Image({
 			image: bg_image_obj,
 			x: 0,
 			y: 0
 		});
-		image_layer.add(image);
-		lowpoly.stage.add(image_layer);
-		image_layer.moveToBottom();
+		lowpoly.image_layer.add(image);
+		lowpoly.stage.add(lowpoly.image_layer);
+		lowpoly.image_layer.moveToBottom();
 		image.on('click', lowpoly.stageClick);
 	}
 
@@ -262,4 +262,17 @@ lowpoly.markAnchorAsSecondSelection = function(anchor)
 lowpoly.markAnchorAsUnselected = function(anchor)
 {
 	anchor.fill("#ffffff");
+}
+
+lowpoly.toggleVisibility = function(event)
+{
+	if (event.target.id == "image")
+	{
+		lowpoly.image_layer.visible(event.target.checked);
+		lowpoly.image_layer.draw();
+		return;
+	}
+	layer = lowpoly.layers[lowpoly.currentLayer][event.target.id];
+	layer.visible(event.target.checked);
+	layer.draw();
 }
