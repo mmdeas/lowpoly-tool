@@ -79,6 +79,7 @@ lowpoly.stageClick = function(event)
 		draggable: 'true'
 	});
 	anchor.on("click", lowpoly.anchorClick);
+	anchor.on("dragstart", lowpoly.anchorClick);
 	anchor.on("dragstart dragmove dragend", lowpoly.anchorDrag);
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.anchors.add(anchor);
