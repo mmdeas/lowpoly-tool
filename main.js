@@ -57,9 +57,16 @@ lowpoly.init = function()
 lowpoly.stageClick = function(event)
 {
 	if (!event.evt.shiftKey && !event.evt.altKey)
+	{
+		for (a in lowpoly.lastAnchors)
+			lowpoly.markAnchorAsUnselected(lowpoly.lastAnchors[a])
 		lowpoly.lastAnchors = [];
+	}
 	if (event.evt.shiftKey && lowpoly.lastAnchors.length == 2)
-		lowpoly.lastAnchors.shift();
+	{
+		a = lowpoly.lastAnchors.shift();
+		lowpoly.markAnchorAsUnselected(a);
+	}
 	var x = event.evt.x;
 	var y = event.evt.y;
 	// draw new anchor
@@ -90,9 +97,11 @@ lowpoly.stageClick = function(event)
 	{
 		var prev = lowpoly.lastAnchors[1];
 		lowpoly.connectAnchors(prev, anchor);
-		lowpoly.lastAnchors.shift();
+		a = lowpoly.lastAnchors.shift();
+		lowpoly.markAnchorAsUnselected(a);
 	}
 	lowpoly.lastAnchors.push(anchor);
+	lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
 	lowpoly.stage.add(layer.lines);
 	lowpoly.stage.add(layer.anchors);
 }
@@ -169,15 +178,20 @@ lowpoly.anchorClick = function(event)
 	if (lowpoly.lastAnchors.length == 0)
 	{
 		lowpoly.lastAnchors.push(event.target);
+		lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
 		return;
 	}
 	if (lowpoly.lastAnchors.length == 2)
-		lowpoly.lastAnchors.shift();
+	{
+		a = lowpoly.lastAnchors.shift();
+		lowpoly.markAnchorAsUnselected(a);
+	}
 	if (event.evt.shiftKey)
 	{
 		lowpoly.connectAnchors(lowpoly.lastAnchors[0], event.target);
 	}
 	lowpoly.lastAnchors.push(event.target);
+	lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
 }
@@ -223,4 +237,32 @@ lowpoly.getColourForTriangle = function(a1, a2, a3)
 	var colour = lowpoly.stage.children[0].canvas._canvas.getContext('2d').getImageData(x, y, 1, 1).data;
 	var ret = 'rgb(' + colour[0] + ', ' + colour[1] + ', ' + colour[2] + ')';
 	return ret;
+}
+
+lowpoly.markAnchorsAsSelected = function(anchors)
+{
+	if (anchors.length == 2)
+	{
+		lowpoly.markAnchorAsFirstSelection(anchors[1]);
+		lowpoly.markAnchorAsSecondSelection(anchors[0]);
+	}
+	if (anchors.length == 1)
+	{
+		lowpoly.markAnchorAsFirstSelection(anchors[0]);
+	}
+}
+
+lowpoly.markAnchorAsFirstSelection = function(anchor)
+{
+	anchor.fill("#00ff00");
+}
+
+lowpoly.markAnchorAsSecondSelection = function(anchor)
+{
+	anchor.fill("#00aa00");
+}
+
+lowpoly.markAnchorAsUnselected = function(anchor)
+{
+	anchor.fill("#ffffff");
 }
