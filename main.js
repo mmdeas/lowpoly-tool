@@ -82,7 +82,7 @@ lowpoly.stageClick = function(event)
 	anchor.on("dragstart dragmove dragend", lowpoly.anchorDrag);
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.anchors.add(anchor);
-	lowpoly.stage.add(layer.anchors);
+	anchor.draw();
 
 	lowpoly.linesWithAnchor[anchor._id] = [];
 	lowpoly.trianglesForAnchor[anchor._id] = [];
@@ -102,8 +102,7 @@ lowpoly.stageClick = function(event)
 	}
 	lowpoly.lastAnchors.push(anchor);
 	lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
-	lowpoly.stage.add(layer.lines);
-	lowpoly.stage.add(layer.anchors);
+	lowpoly.stage.draw();
 }
 
 lowpoly.connectAnchors = function(a1, a2)
@@ -168,7 +167,7 @@ lowpoly.connectAnchors = function(a1, a2)
 			lowpoly.trianglesForAnchor[n1[n]._id].push(tri);
 			lowpoly.anchorsForTriangle[tri._id] = [a1, a2, n1[n]];
 			lowpoly.layers[lowpoly.currentLayer].polys.add(tri);
-			lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].polys);
+			tri.draw();
 		}
 	}
 }
@@ -192,8 +191,7 @@ lowpoly.anchorClick = function(event)
 	}
 	lowpoly.lastAnchors.push(event.target);
 	lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
+	lowpoly.stage.draw();
 }
 
 lowpoly.redrawLine = function(line)
@@ -225,9 +223,7 @@ lowpoly.anchorDrag = function(event)
 	{
 		lowpoly.redrawTriangle(triangles[tri]);
 	}
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].polys);
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
-	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
+	lowpoly.stage.draw();
 }
 
 lowpoly.getColourForTriangle = function(a1, a2, a3)
