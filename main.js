@@ -48,9 +48,9 @@ lowpoly.init = function()
 	lowpoly.currentLayer = "main";
 	
 
-	lowpoly.stage.add(anchor_layer);
 	lowpoly.stage.add(line_layer);
 	lowpoly.stage.add(poly_layer);
+	lowpoly.stage.add(anchor_layer);
 }
 
 lowpoly.stageClick = function(event)
