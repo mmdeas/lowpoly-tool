@@ -6,7 +6,8 @@ if (typeof(lowpoly) === 'undefined')
 	currentLayer: undefined,
 	layers: {},
 	lastAnchors: [],
-	trianglesForAnchor: []
+	trianglesForAnchor: {},
+	anchorsForTriangle: {}
 	};
 }
 
@@ -156,6 +157,7 @@ lowpoly.connectAnchors = function(a1, a2)
 			lowpoly.trianglesForAnchor[a1._id].push(tri);
 			lowpoly.trianglesForAnchor[a2._id].push(tri);
 			lowpoly.trianglesForAnchor[n1[n]._id].push(tri);
+			lowpoly.anchorsForTriangle[tri._id] = [a1, a2, n1[n]];
 			lowpoly.layers[lowpoly.currentLayer].polys.add(tri);
 			lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].polys);
 		}
@@ -187,6 +189,15 @@ lowpoly.redrawLine = function(line)
 	line.setPoints([a1.x(), a1.y(), a2.x(), a2.y()]);
 }
 
+lowpoly.redrawTriangle = function(triangle)
+{
+	a1 = lowpoly.anchorsForTriangle[triangle._id][0];
+	a2 = lowpoly.anchorsForTriangle[triangle._id][1];
+	a3 = lowpoly.anchorsForTriangle[triangle._id][2];
+	triangle.setPoints([a1.x(), a1.y(), a2.x(), a2.y(), a3.x(), a3.y()]);
+	triangle.fill(lowpoly.getColourForTriangle(a1, a2, a3));
+}
+
 lowpoly.anchorDrag = function(event)
 {
 	anchor = event.target;
@@ -195,6 +206,12 @@ lowpoly.anchorDrag = function(event)
 	{
 		lowpoly.redrawLine(lines[line]);
 	}
+	triangles = lowpoly.trianglesForAnchor[anchor._id];
+	for (tri in triangles)
+	{
+		lowpoly.redrawTriangle(triangles[tri]);
+	}
+	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].polys);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].lines);
 	lowpoly.stage.add(lowpoly.layers[lowpoly.currentLayer].anchors);
 }
