@@ -287,3 +287,73 @@ lowpoly.toggleVisibility = function(event)
 	layer.visible(event.target.checked);
 	layer.draw();
 }
+
+lowpoly.deleteTriangle = function(triangle)
+{
+	for (a in lowpoly.anchorsForTriangle[triangle._id])
+	{
+		var anchor = lowpoly.anchorsForTriangle[triangle._id][a];
+		var triangles = lowpoly.trianglesForAnchor[anchor._id];
+		$.each(triangles, function(i) {
+			if (triangles[i] === triangle) {
+				triangles.splice(i, 1);
+				return false;
+			}
+		});
+	}
+	delete lowpoly.anchorsForTriangle[triangle._id];
+	var layer = triangle.getLayer();
+	triangle.destroy();
+	layer.draw();
+}
+
+lowpoly.deleteLine = function(line)
+{
+	for (a in lowpoly.anchorsForLine[line._id])
+	{
+		var anchor = lowpoly.anchorsForLine[line._id][a];
+		var lines = lowpoly.linesWithAnchor[anchor._id];
+		$.each(lines, function(i) {
+		    if (lines[i] === line) {
+		        lines.splice(i,1);
+		        return false;
+		    }
+		});
+	}
+	var triangles0 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line._id][0]._id];
+	var triangles1 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line._id][1]._id];
+	// for (t in triangles0)
+	var t = 0;
+	while (t < triangles0.length)
+	{
+		if ($.inArray(triangles0[t], triangles1) != -1)
+			lowpoly.deleteTriangle(triangles0[t]);
+		else
+			++t;
+	}
+	delete lowpoly.anchorsForLine[line._id];
+	var layer = line.getLayer();
+	line.destroy();
+	layer.draw();
+}
+
+lowpoly.deleteAnchor = function(anchor)
+{
+	var connections = [];
+	// for (l in lowpoly.linesWithAnchor[anchor._id])
+	while(lowpoly.linesWithAnchor[anchor._id].length != 0)
+	{
+		var line = lowpoly.linesWithAnchor[anchor._id][0];
+		var anchors = lowpoly.anchorsForLine[line._id];
+		if (anchors[0] === anchor)
+			connections.push(anchors[1]);
+		else
+			connections.push(anchors[0]);
+		lowpoly.deleteLine(line);
+	}
+	delete lowpoly.linesWithAnchor[anchor._id];
+	var layer = anchor.getLayer();
+	anchor.destroy();
+	layer.draw();
+	return connections;
+}
