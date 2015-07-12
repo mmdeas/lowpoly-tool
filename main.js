@@ -260,7 +260,7 @@ lowpoly.markAnchorAsFirstSelection = function(anchor)
 
 lowpoly.markAnchorAsSecondSelection = function(anchor)
 {
-	anchor.fill("#00aa00");
+	anchor.fill("#ff0000");
 }
 
 lowpoly.markAnchorAsUnselected = function(anchor)
