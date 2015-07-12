@@ -78,6 +78,7 @@ lowpoly.stageClick = function(event)
 		y: y,
 		fill: 'white',
 		stroke: 'black',
+		strokeWidth: 1,
 		draggable: 'true'
 	});
 	anchor.on("click", lowpoly.anchorClick);
