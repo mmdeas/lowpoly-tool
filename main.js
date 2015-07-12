@@ -235,7 +235,13 @@ lowpoly.getColourForTriangle = function(a1, a2, a3)
 {
 	var x = (a1.x() + a2.x() + a3.x()) / 3;
 	var y = (a1.y() + a2.y() + a3.y()) / 3;
-	var colour = lowpoly.stage.children[0].canvas._canvas.getContext('2d').getImageData(x, y, 1, 1).data;
+	var l = lowpoly.image_layer;
+	var vis = l.visible();
+	l.visible(true);
+	l.draw();
+	var colour = l.canvas._canvas.getContext('2d').getImageData(x, y, 1, 1).data;
+	l.visible(vis);
+	l.draw();
 	var ret = 'rgb(' + colour[0] + ', ' + colour[1] + ', ' + colour[2] + ')';
 	return ret;
 }
