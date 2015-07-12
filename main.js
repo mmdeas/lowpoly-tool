@@ -33,6 +33,8 @@ lowpoly.init = function()
 			y: 0
 		});
 		lowpoly.image_layer.add(image);
+		lowpoly.stage.width(bg_image_obj.width);
+		lowpoly.stage.height(bg_image_obj.height);
 		lowpoly.stage.add(lowpoly.image_layer);
 		lowpoly.image_layer.moveToBottom();
 		image.on('click', lowpoly.stageClick);
