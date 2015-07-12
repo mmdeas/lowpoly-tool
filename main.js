@@ -183,6 +183,8 @@ lowpoly.anchorClick = function(event)
 		lowpoly.markAnchorsAsSelected(lowpoly.lastAnchors);
 		return;
 	}
+	if (lowpoly.lastAnchors[lowpoly.lastAnchors.length - 1] == event.target)
+		return;
 	if (lowpoly.lastAnchors.length == 2)
 	{
 		a = lowpoly.lastAnchors.shift();
