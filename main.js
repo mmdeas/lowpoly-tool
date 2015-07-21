@@ -7,7 +7,8 @@ if (typeof(lowpoly) === 'undefined')
 	layers: {},
 	lastAnchors: [],
 	trianglesForAnchor: {},
-	anchorsForTriangle: {}
+	anchorsForTriangle: {},
+	nextId: 1
 	};
 }
 
@@ -79,7 +80,8 @@ lowpoly.stageClick = function(event)
 		fill: 'white',
 		stroke: 'black',
 		strokeWidth: 1,
-		draggable: 'true'
+		draggable: 'true',
+		id: lowpoly.nextId++
 	});
 	anchor.on("click", lowpoly.anchorClick);
 	anchor.on("dragstart", lowpoly.anchorClick);
@@ -88,8 +90,8 @@ lowpoly.stageClick = function(event)
 	layer.anchors.add(anchor);
 	anchor.draw();
 
-	lowpoly.linesWithAnchor[anchor._id] = [];
-	lowpoly.trianglesForAnchor[anchor._id] = [];
+	lowpoly.linesWithAnchor[anchor.id()] = [];
+	lowpoly.trianglesForAnchor[anchor.id()] = [];
 
 	// draw lines
 	if (lowpoly.lastAnchors.length > 0)
@@ -113,35 +115,36 @@ lowpoly.connectAnchors = function(a1, a2)
 {
 	var line = new Konva.Line({
 		points: [a1.x(), a1.y(), a2.x(), a2.y()],
-		stroke: 'black'
+		stroke: 'black',
+		id: lowpoly.nextId++
 	});
 	var layer = lowpoly.layers[lowpoly.currentLayer];
 	layer.lines.add(line);
-	lowpoly.linesWithAnchor[a1._id].push(line);
-	lowpoly.linesWithAnchor[a2._id].push(line);
-	lowpoly.anchorsForLine[line._id] = [a1, a2];
+	lowpoly.linesWithAnchor[a1.id()].push(line);
+	lowpoly.linesWithAnchor[a2.id()].push(line);
+	lowpoly.anchorsForLine[line.id()] = [a1, a2];
 	// detect new triangles
 	a1neighbours = {};
-	lines = lowpoly.linesWithAnchor[a1._id];
+	lines = lowpoly.linesWithAnchor[a1.id()];
 	for (line in lines)
 	{
-		lineId = lines[line]._id;
+		lineId = lines[line].id();
 		lineAnchors = lowpoly.anchorsForLine[lineId];
 		if (a1 != lineAnchors[0] && a2 != lineAnchors[0])
-			a1neighbours[lineAnchors[0]._id] = lineAnchors[0];
+			a1neighbours[lineAnchors[0].id()] = lineAnchors[0];
 		else if (a1 != lineAnchors[1] && a2 != lineAnchors[1])
-			a1neighbours[lineAnchors[1]._id] = lineAnchors[1];
+			a1neighbours[lineAnchors[1].id()] = lineAnchors[1];
 	}
 	a2neighbours = {};
-	lines = lowpoly.linesWithAnchor[a2._id];
+	lines = lowpoly.linesWithAnchor[a2.id()];
 	for (line in lines)
 	{
-		lineId = lines[line]._id;
+		lineId = lines[line].id();
 		lineAnchors = lowpoly.anchorsForLine[lineId];
 		if (a2 != lineAnchors[0] && a1 != lineAnchors[0])
-			a2neighbours[lineAnchors[0]._id] = lineAnchors[0];
+			a2neighbours[lineAnchors[0].id()] = lineAnchors[0];
 		else if (a2 != lineAnchors[1] && a1 != lineAnchors[1])
-			a2neighbours[lineAnchors[1]._id] = lineAnchors[1];
+			a2neighbours[lineAnchors[1].id()] = lineAnchors[1];
 	}
 
 	if (a1neighbours.size < a2neighbours.size)
@@ -164,12 +167,13 @@ lowpoly.connectAnchors = function(a1, a2)
 				points: [a1.x(), a1.y(), a2.x(), a2.y(), n1[n].x(), n1[n].y()],
 				strokeWidth: 0,
 				closed: true,
-				fill: fill_colour
+				fill: fill_colour,
+				id: lowpoly.nextId++
 			})
-			lowpoly.trianglesForAnchor[a1._id].push(tri);
-			lowpoly.trianglesForAnchor[a2._id].push(tri);
-			lowpoly.trianglesForAnchor[n1[n]._id].push(tri);
-			lowpoly.anchorsForTriangle[tri._id] = [a1, a2, n1[n]];
+			lowpoly.trianglesForAnchor[a1.id()].push(tri);
+			lowpoly.trianglesForAnchor[a2.id()].push(tri);
+			lowpoly.trianglesForAnchor[n1[n].id()].push(tri);
+			lowpoly.anchorsForTriangle[tri.id()] = [a1, a2, n1[n]];
 			lowpoly.layers[lowpoly.currentLayer].polys.add(tri);
 			tri.draw();
 		}
@@ -202,16 +206,16 @@ lowpoly.anchorClick = function(event)
 
 lowpoly.redrawLine = function(line)
 {
-	a1 = lowpoly.anchorsForLine[line._id][0];
-	a2 = lowpoly.anchorsForLine[line._id][1];
+	a1 = lowpoly.anchorsForLine[line.id()][0];
+	a2 = lowpoly.anchorsForLine[line.id()][1];
 	line.setPoints([a1.x(), a1.y(), a2.x(), a2.y()]);
 }
 
 lowpoly.redrawTriangle = function(triangle)
 {
-	a1 = lowpoly.anchorsForTriangle[triangle._id][0];
-	a2 = lowpoly.anchorsForTriangle[triangle._id][1];
-	a3 = lowpoly.anchorsForTriangle[triangle._id][2];
+	a1 = lowpoly.anchorsForTriangle[triangle.id()][0];
+	a2 = lowpoly.anchorsForTriangle[triangle.id()][1];
+	a3 = lowpoly.anchorsForTriangle[triangle.id()][2];
 	triangle.setPoints([a1.x(), a1.y(), a2.x(), a2.y(), a3.x(), a3.y()]);
 	triangle.fill(lowpoly.getColourForTriangle(a1, a2, a3));
 }
@@ -219,12 +223,12 @@ lowpoly.redrawTriangle = function(triangle)
 lowpoly.anchorDrag = function(event)
 {
 	anchor = event.target;
-	lines = lowpoly.linesWithAnchor[anchor._id];
+	lines = lowpoly.linesWithAnchor[anchor.id()];
 	for (line in lines)
 	{
 		lowpoly.redrawLine(lines[line]);
 	}
-	triangles = lowpoly.trianglesForAnchor[anchor._id];
+	triangles = lowpoly.trianglesForAnchor[anchor.id()];
 	for (tri in triangles)
 	{
 		lowpoly.redrawTriangle(triangles[tri]);
@@ -290,10 +294,10 @@ lowpoly.toggleVisibility = function(event)
 
 lowpoly.deleteTriangle = function(triangle)
 {
-	for (a in lowpoly.anchorsForTriangle[triangle._id])
+	for (a in lowpoly.anchorsForTriangle[triangle.id()])
 	{
-		var anchor = lowpoly.anchorsForTriangle[triangle._id][a];
-		var triangles = lowpoly.trianglesForAnchor[anchor._id];
+		var anchor = lowpoly.anchorsForTriangle[triangle.id()][a];
+		var triangles = lowpoly.trianglesForAnchor[anchor.id()];
 		$.each(triangles, function(i) {
 			if (triangles[i] === triangle) {
 				triangles.splice(i, 1);
@@ -301,7 +305,7 @@ lowpoly.deleteTriangle = function(triangle)
 			}
 		});
 	}
-	delete lowpoly.anchorsForTriangle[triangle._id];
+	delete lowpoly.anchorsForTriangle[triangle.id()];
 	var layer = triangle.getLayer();
 	triangle.destroy();
 	layer.draw();
@@ -309,10 +313,10 @@ lowpoly.deleteTriangle = function(triangle)
 
 lowpoly.deleteLine = function(line)
 {
-	for (a in lowpoly.anchorsForLine[line._id])
+	for (a in lowpoly.anchorsForLine[line.id()])
 	{
-		var anchor = lowpoly.anchorsForLine[line._id][a];
-		var lines = lowpoly.linesWithAnchor[anchor._id];
+		var anchor = lowpoly.anchorsForLine[line.id()][a];
+		var lines = lowpoly.linesWithAnchor[anchor.id()];
 		$.each(lines, function(i) {
 		    if (lines[i] === line) {
 		        lines.splice(i,1);
@@ -320,9 +324,8 @@ lowpoly.deleteLine = function(line)
 		    }
 		});
 	}
-	var triangles0 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line._id][0]._id];
-	var triangles1 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line._id][1]._id];
-	// for (t in triangles0)
+	var triangles0 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line.id()][0].id()];
+	var triangles1 = lowpoly.trianglesForAnchor[lowpoly.anchorsForLine[line.id()][1].id()];
 	var t = 0;
 	while (t < triangles0.length)
 	{
@@ -331,7 +334,7 @@ lowpoly.deleteLine = function(line)
 		else
 			++t;
 	}
-	delete lowpoly.anchorsForLine[line._id];
+	delete lowpoly.anchorsForLine[line.id()];
 	var layer = line.getLayer();
 	line.destroy();
 	layer.draw();
@@ -340,18 +343,17 @@ lowpoly.deleteLine = function(line)
 lowpoly.deleteAnchor = function(anchor)
 {
 	var connections = [];
-	// for (l in lowpoly.linesWithAnchor[anchor._id])
-	while(lowpoly.linesWithAnchor[anchor._id].length != 0)
+	while(lowpoly.linesWithAnchor[anchor.id()].length != 0)
 	{
-		var line = lowpoly.linesWithAnchor[anchor._id][0];
-		var anchors = lowpoly.anchorsForLine[line._id];
+		var line = lowpoly.linesWithAnchor[anchor.id()][0];
+		var anchors = lowpoly.anchorsForLine[line.id()];
 		if (anchors[0] === anchor)
 			connections.push(anchors[1]);
 		else
 			connections.push(anchors[0]);
 		lowpoly.deleteLine(line);
 	}
-	delete lowpoly.linesWithAnchor[anchor._id];
+	delete lowpoly.linesWithAnchor[anchor.id()];
 	var layer = anchor.getLayer();
 	anchor.destroy();
 	layer.draw();
