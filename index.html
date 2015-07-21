@@ -14,6 +14,9 @@
 	<input type="checkbox" id="lines" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show lines
 	<input type="checkbox" id="polys" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show polys
 	<input type="checkbox" id="image" checked="true" onchange="lowpoly.toggleVisibility(event)" />Show image
+	<br />
+	<input type="button" id="del_line" value="Delete line" onclick="lowpoly.deleteCurrentLine()"></input>
+	<input type="button" id="del_anchor" value="Delete anchor" onclick="lowpoly.deleteCurrentAnchor()"></input>
 </div>
 </body>
 </html>

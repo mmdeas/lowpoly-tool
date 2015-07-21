@@ -359,3 +359,35 @@ lowpoly.deleteAnchor = function(anchor)
 	layer.draw();
 	return connections;
 }
+
+lowpoly.deleteCurrentLine = function()
+{
+	var a1 = lowpoly.lastAnchors[0];
+	var a2 = lowpoly.lastAnchors[1];
+	var l1 = lowpoly.linesWithAnchor[a1.id()];
+	var l2 = lowpoly.linesWithAnchor[a2.id()]
+	for (l in l2)
+	{
+		if ($.inArray(l2[l], l1) != -1)
+		{
+			lowpoly.deleteLine(l2[l]);
+			break;
+		}
+	}
+}
+
+lowpoly.deleteCurrentAnchor = function()
+{
+	if (lowpoly.lastAnchors.length == 1)
+	{
+		lowpoly.deleteAnchor(lowpoly.lastAnchors[0]);
+		lowpoly.lastAnchors = [];
+	}
+	else if (lowpoly.lastAnchors.length > 1)
+	{
+		lowpoly.deleteAnchor(lowpoly.lastAnchors[1]);
+		lowpoly.lastAnchors.pop();
+		lowpoly.markAnchorAsFirstSelection(lowpoly.lastAnchors[0]);
+		lowpoly.lastAnchors[0].draw();
+	}
+}
