@@ -70,8 +70,8 @@ lowpoly.stageClick = function(event)
 		a = lowpoly.lastAnchors.shift();
 		lowpoly.markAnchorAsUnselected(a);
 	}
-	var x = event.evt.x;
-	var y = event.evt.y;
+	var x = event.evt.layerX;
+	var y = event.evt.layerY;
 	// draw new anchor
 	var anchor = new Konva.Circle({
 		radius: 5,
